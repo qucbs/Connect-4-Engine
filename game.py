@@ -44,17 +44,18 @@ def check_winner(row, column, player):
     for i in range(rows):
         if board[i][column] == player:
             vertical += 1
-        else: break
-    if vertical > 3: return True
+        else: vertical = 0
+
+        if vertical > 3: return True
 
     # Horizontal Check
     horizontal = 0
     for j in range(columns):
         if board[row][j] == player:
             horizontal += 1
-        else:
-            break
-    if horizontal > 3: return True
+        else: horizontal = 0
+
+        if horizontal > 3: return True
 
     # For \ Diagonal (1 so that we count the starting piece)
     diagonal_1 = 1
@@ -95,7 +96,7 @@ def check_winner(row, column, player):
     
     r = row + 1
     c = column - 1
-    while (r < columns and c >= 0):
+    while (r < rows and c >= 0):
         if board[r][c] == player:
             diagnoal_2 += 1
         else: break
@@ -104,6 +105,7 @@ def check_winner(row, column, player):
     if diagnoal_2 > 3: return True
 
     # Return False if nobody won
+    print("No winner")
     return False
 
 

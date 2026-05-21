@@ -26,6 +26,7 @@ player1_turn = font.render("Player 1", False, yellow)
 player2_turn = font.render("Player 2", False, red)
 player1_win = font.render("Player 1 is the Winner", False, yellow)
 player2_win = font.render("Player 2 is the winner", False, red)
+tie = font.render("Tie!!", False, white)
 
 
 screen.blit(player1_turn, (290, 625))
@@ -76,6 +77,12 @@ while True:
                     color = red if player == 2 else yellow
 
                     pygame.draw.circle(screen, color, center, radius)
+
+                    if game.check_winner(h//100, w//100, player):
+                        pygame.event.set_blocked(pygame.MOUSEBUTTONDOWN)
+                        pygame.draw.rect(screen, black, (0, 600, 700, 100))
+                        screen.blit(player1_win, (180, 625)) if player == 1 else screen.blit(player2_win, (180, 625))
+                        break
 
                     player = 3 - player
 
