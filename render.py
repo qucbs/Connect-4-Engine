@@ -1,6 +1,7 @@
 import pygame
 import sys
 import game
+import engine
 
 pygame.init()
 
@@ -10,6 +11,9 @@ columns = 7
 rows = 6
 cell_size = 100
 player = 1
+current_player = 1
+human = 1
+ai = 2
 
 # Declaring Colors
 black = (0, 0, 0)
@@ -47,10 +51,24 @@ while True:
         pygame.draw.rect(screen, black, (0, 600, 700, 100))
         screen.blit(tie, (315, 625))
 
+    if current_player == ai:
+        col = engine.move()
+        if (temp := game.check_move(w//100)) > -1:
+            row = temp
+
+            game.make_move(row, col, ai)
+
+            # Render the move
+            center = (col * 100 + 50, row * 100 + 50)
+            pygame.draw.circle(screen, red, center, radius)
+
+            current_player = human
+
     # Now check for mouse input and quit game
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             sys.exit()
+
 
         if event.type == pygame.MOUSEBUTTONDOWN:
             # Overide the previous text with a black rectangle
@@ -93,7 +111,6 @@ while True:
 
                     # turn indicator
                     screen.blit(player1_turn, (290, 625)) if player == 1 else screen.blit(player2_turn, (290, 625))
-
                     # Printing the board in the terminal for debugging
                     for i in range(6):
                         for j in range(7):
@@ -102,4 +119,8 @@ while True:
                     break
             else:
                 continue
+
+
+
+
     pygame.display.update()
