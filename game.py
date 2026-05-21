@@ -108,4 +108,8 @@ def check_winner(row, column, player):
     print("No winner")
     return False
 
-
+def check_tie():
+    for i in range(columns):
+        if board[0][i] == 0:
+            return False
+    return True

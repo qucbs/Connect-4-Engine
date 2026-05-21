@@ -42,6 +42,11 @@ while True:
             rect = pygame.Rect(x, y, cell_size, cell_size)
             pygame.draw.rect(screen, white, rect, 2)
 
+    if game.check_tie():
+        pygame.event.set_blocked(pygame.MOUSEBUTTONDOWN)
+        pygame.draw.rect(screen, black, (0, 600, 700, 100))
+        screen.blit(tie, (315, 625))
+
     # Now check for mouse input and quit game
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
