@@ -3,6 +3,9 @@
 # move on a certain square (thus it stores the value of all moves)
 # This can also help us with the gravity implementation
 
+from numpy import diag
+
+
 rows = 6
 columns = 7
 
@@ -23,7 +26,7 @@ def check_move(column):
 
     return -1
 
-def make_move (row, column, player):
+def make_move(row, column, player):
     if player == 1:
         board[row][column] = 1;
         return True
@@ -33,3 +36,74 @@ def make_move (row, column, player):
     else:
         print("There was an error")
         return False
+
+
+def check_winner(row, column, player):
+    # Vertical Check
+    vertical = 0
+    for i in range(rows):
+        if board[i][column] == player:
+            vertical += 1
+        else: break
+    if vertical > 3: return True
+
+    # Horizontal Check
+    horizontal = 0
+    for j in range(columns):
+        if board[row][j] == player:
+            horizontal += 1
+        else:
+            break
+    if horizontal > 3: return True
+
+    # For \ Diagonal (1 so that we count the starting piece)
+    diagonal_1 = 1
+
+    # Using different variables so that I can edit them
+    r = row - 1
+    c = column - 1
+    while (r >= 0 and c >= 0):
+        if board[r][c] == player:
+            diagonal_1 += 1
+        else: break
+        r -= 1
+        c -= 1
+
+# Plus one so that I do not count the starting piece again
+    r = row + 1
+    c = column + 1
+    while (r < rows and c < columns):
+        if board[r][c] == player:
+            diagonal_1 += 1
+        else: break
+        r += 1
+        c += 1
+    if diagonal_1 > 3: return True
+
+    # For / Diagonal (1 so that we count the starting piece)
+    diagnoal_2 = 1
+
+    # to not count the starting piece
+    r = row - 1
+    c = column + 1
+    while (r >= 0 and c < columns):
+        if board[r][c] == player:
+            diagnoal_2 += 1
+        else: break
+        r -= 1
+        c += 1
+    
+    r = row + 1
+    c = column - 1
+    while (r < columns and c >= 0):
+        if board[r][c] == player:
+            diagnoal_2 += 1
+        else: break
+        r += 1
+        c -= 1
+    if diagnoal_2 > 3: return True
+
+    # Return False if nobody won
+    return False
+
+
