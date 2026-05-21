@@ -10,10 +10,11 @@ size = width, height = 700, 700
 columns = 7
 rows = 6
 cell_size = 100
-player = 1
 current_player = 1
 human = 1
 ai = 2
+game_over = False
+winner = 0
 
 # Declaring Colors
 black = (0, 0, 0)
@@ -35,92 +36,111 @@ tie = font.render("Tie!!", False, white)
 
 screen.blit(player1_turn, (290, 625))
 
-while True:
+running = True
+while running:
+    if game.check_tie():
+        game_over = True
+
+
+
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            sys.exit()
+
+
+# If the current player is human
+
+        if current_player == human and event.type == pygame.MOUSEBUTTONDOWN and not game_over:
+
+            #  Get the mouse position
+            w , h = pygame.mouse.get_pos()
+
+            print(f'Width {w} , Height {h}')
+            col = (w // 100)
+            row = (h // 100) * 100
+            print(f'Width {col} , Height {row}')
+
+            # Making sure a move is not registered after clicking on the bottom bar
+            if row == 600:
+                continue
+
+            # Check if the move made is legal
+            if (row := game.check_move(col)) > -1:
+
+                game.make_move(row, col, human)
+
+                if game.check_winner(row, col, human):
+                    winner = human
+                    game_over = True
+                else:
+                    current_player = ai
+
+# If the current player is AI
+
+    if current_player == ai and not game_over:
+        col = engine.move()
+        if (row := game.check_move(col)) > -1:
+            
+            game.make_move(row, col, ai)
+
+            if game.check_winner(row, col, ai):
+                winner = ai
+                game_over = True
+            else:
+                current_player = human
+
+
+
+    # All rendering logic
+    # Making the screen black before each render
+
+    screen.fill(black)
+
+    # Rendering the rectangles
     for row in range(rows):
         for col in range(columns):
 
             x = col * cell_size
             y = row * cell_size
 
-            # Draw all the squares
+            # Draw all the rectangles
             rect = pygame.Rect(x, y, cell_size, cell_size)
             pygame.draw.rect(screen, white, rect, 2)
 
-    if game.check_tie():
-        pygame.event.set_blocked(pygame.MOUSEBUTTONDOWN)
-        pygame.draw.rect(screen, black, (0, 600, 700, 100))
-        screen.blit(tie, (315, 625))
+    # Drawing the pieces
+    board = game.board
 
-    if current_player == ai:
-        col = engine.move()
-        if (temp := game.check_move(w//100)) > -1:
-            row = temp
+    for row in range(rows):
+        for column in range(columns):
 
-            game.make_move(row, col, ai)
+            value = board[row][column]
 
-            # Render the move
-            center = (col * 100 + 50, row * 100 + 50)
-            pygame.draw.circle(screen, red, center, radius)
+            center = (column*100 + 50, row*100 + 50)
+            radius = (cell_size/2) - 8
 
-            current_player = human
+            if value == 2: color = red
+            elif value == 1: color = yellow
+            else: continue
 
-    # Now check for mouse input and quit game
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            sys.exit()
+            pygame.draw.circle(screen, color, center, radius)
 
 
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            # Overide the previous text with a black rectangle
-            pygame.draw.rect(screen, black, (0, 600, 700, 100))
-            # Get the mouse position
-            w , h = pygame.mouse.get_pos()
+    # Rendering the text
 
-            print(f'Width {w} , Height {h}')
-            w = (w // 100) * 100
-            h = (h // 100) * 100
-
-            # Making sure a move is not registered after clicking on the bottom bar
-            if h == 600:
-                continue
-
-            for i in range(rows):
-            # Checking if the move made is legal
-                if (temp := game.check_move(w//100)) > -1:
-                    h = temp*100
-                    game.make_move(h//100, w//100, player)
-
-                    # calc for circle
-                    center = (w+50, h+50)
-                    radius = (cell_size/2) - 8
-
-                    print(f'Width {w} , Height {h}')
-
-                    # Choosing the color
-                    color = red if player == 2 else yellow
-
-                    pygame.draw.circle(screen, color, center, radius)
-
-                    if game.check_winner(h//100, w//100, player):
-                        pygame.event.set_blocked(pygame.MOUSEBUTTONDOWN)
-                        pygame.draw.rect(screen, black, (0, 600, 700, 100))
-                        screen.blit(player1_win, (180, 625)) if player == 1 else screen.blit(player2_win, (180, 625))
-                        break
-
-                    player = 3 - player
-
-                    # turn indicator
-                    screen.blit(player1_turn, (290, 625)) if player == 1 else screen.blit(player2_turn, (290, 625))
-                    # Printing the board in the terminal for debugging
-                    for i in range(6):
-                        for j in range(7):
-                            print(f' {game.board[i][j]} ', end = '')
-                        print('')
-                    break
-            else:
-                continue
+    if game_over:
+        if winner == human:
+            screen.blit(player1_win, (180, 625))
+        elif winner == ai:
+            screen.blit(player2_win, (180, 625))
+        else:
+            screen.blit(tie, (315, 625))
 
 
+    else:
+        if current_player == human:
+            screen.blit(player1_turn, (290, 625))
+        else:
+            screen.blit(player2_turn, (290, 625))
 
 
     pygame.display.update()
