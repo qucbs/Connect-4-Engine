@@ -18,31 +18,31 @@ board = [
     [0,0,0,0,0,0,0]
 ]
 
-def check_move(column):
+def check_move(panel, column):
 
     for row in reversed(range(rows)):
-        if board[row][column] == 0:
+        if panel[row][column] == 0:
             return row
 
     return -1
 
-def make_move(row, column, player):
+def make_move(panel, row, column, player):
     if player == 1:
-        board[row][column] = 1;
+        panel[row][column] = 1;
         return True
     elif player == 2:
-        board[row][column] = 2;
+        panel[row][column] = 2;
         return True
     else:
         print("There was an error")
         return False
 
 
-def check_winner(row, column, player):
+def check_winner(panel, row, column, player):
     # Vertical Check
     vertical = 0
     for i in range(rows):
-        if board[i][column] == player:
+        if panel[i][column] == player:
             vertical += 1
         else: vertical = 0
 
@@ -51,7 +51,7 @@ def check_winner(row, column, player):
     # Horizontal Check
     horizontal = 0
     for j in range(columns):
-        if board[row][j] == player:
+        if panel[row][j] == player:
             horizontal += 1
         else: horizontal = 0
 
@@ -64,7 +64,7 @@ def check_winner(row, column, player):
     r = row - 1
     c = column - 1
     while (r >= 0 and c >= 0):
-        if board[r][c] == player:
+        if panel[r][c] == player:
             diagonal_1 += 1
         else: break
         r -= 1
@@ -74,7 +74,7 @@ def check_winner(row, column, player):
     r = row + 1
     c = column + 1
     while (r < rows and c < columns):
-        if board[r][c] == player:
+        if panel[r][c] == player:
             diagonal_1 += 1
         else: break
         r += 1
@@ -88,7 +88,7 @@ def check_winner(row, column, player):
     r = row - 1
     c = column + 1
     while (r >= 0 and c < columns):
-        if board[r][c] == player:
+        if panel[r][c] == player:
             diagnoal_2 += 1
         else: break
         r -= 1
@@ -97,7 +97,7 @@ def check_winner(row, column, player):
     r = row + 1
     c = column - 1
     while (r < rows and c >= 0):
-        if board[r][c] == player:
+        if panel[r][c] == player:
             diagnoal_2 += 1
         else: break
         r += 1
@@ -105,11 +105,10 @@ def check_winner(row, column, player):
     if diagnoal_2 > 3: return True
 
     # Return False if nobody won
-    print("No winner")
     return False
 
-def check_tie():
+def check_tie(panel):
     for i in range(columns):
-        if board[0][i] == 0:
+        if panel[0][i] == 0:
             return False
     return True

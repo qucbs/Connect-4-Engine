@@ -38,7 +38,7 @@ screen.blit(player1_turn, (290, 625))
 
 running = True
 while running:
-    if game.check_tie():
+    if game.check_tie(game.board):
         game_over = True
 
 
@@ -65,11 +65,11 @@ while running:
                 continue
 
             # Check if the move made is legal
-            if (row := game.check_move(col)) > -1:
+            if (row := game.check_move(game.board, col)) > -1:
 
-                game.make_move(row, col, human)
+                game.make_move(game.board, row, col, human)
 
-                if game.check_winner(row, col, human):
+                if game.check_winner(game.board, row, col, human):
                     winner = human
                     game_over = True
                 else:
@@ -78,12 +78,14 @@ while running:
 # If the current player is AI
 
     if current_player == ai and not game_over:
-        col = engine.move()
-        if (row := game.check_move(col)) > -1:
-            
-            game.make_move(row, col, ai)
+        # Wait a few seconds before AI moves
 
-            if game.check_winner(row, col, ai):
+        col = engine.move(game.board)
+        if (row := game.check_move(game.board, col)) > -1:
+            
+            game.make_move(game.board, row, col, ai)
+
+            if game.check_winner(game.board, row, col, ai):
                 winner = ai
                 game_over = True
             else:
@@ -135,12 +137,6 @@ while running:
         else:
             screen.blit(tie, (315, 625))
 
-
-    else:
-        if current_player == human:
-            screen.blit(player1_turn, (290, 625))
-        else:
-            screen.blit(player2_turn, (290, 625))
 
 
     pygame.display.update()
