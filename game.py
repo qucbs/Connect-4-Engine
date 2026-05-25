@@ -1,11 +1,3 @@
-# Implement the check winner function
-# Implement the function that returns true or false whether we can
-# move on a certain square (thus it stores the value of all moves)
-# This can also help us with the gravity implementation
-
-from numpy import diag
-
-
 rows = 6
 columns = 7
 
