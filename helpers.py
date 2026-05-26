@@ -16,13 +16,13 @@ def evaluate_window(window):
     empty_count = window.count(empty)
 
     if ai_count == 4:
-        evaluation += 80
+        evaluation += 100000
     elif ai_count == 3 and empty_count == 1:
         evaluation += 40
     elif ai_count == 2 and empty_count == 2:
         evaluation +=20
     elif human_count == 4:
-        evaluation -= 120
+        evaluation -= 100000
     elif human_count == 3 and empty_count == 1:
         evaluation -= 80
     elif human_count == 2 and empty_count == 2:

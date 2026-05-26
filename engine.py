@@ -14,45 +14,30 @@ possible_moves = [0,1,2,3,4,5,6]
 ai = 2
 human = 1
 center_column = columns // 2
+game_depth = 4
 
 def move(board):
+    best_score = -float('inf')
+    best_column = -1
+
     for col in range(columns):
         temp_board = copy.deepcopy(board)
 
         if (row:= game.check_move(temp_board, col)) > -1:
             game.make_move(temp_board, row, col, ai)
+
             if game.check_winner(temp_board, row, col, ai):
                 return col
 
-    for col in range(columns):
-        temp_board = copy.deepcopy(board)
+            score = minmax(temp_board, game_depth, False)
 
-        if (row:= game.check_move(temp_board, col)) > -1:
-            game.make_move(temp_board, row, col, human)
-            if game.check_winner(temp_board, row, col, human):
-                return col
+            if score > best_score:
+                best_score = score
+                best_column = col
     
-    best_score = -999
-    best_move = None
+    print("col:", col, "score:", score)
+    return best_column
 
-    for col in range(columns):
-        temp_board = copy.deepcopy(board)
-
-        row = game.check_move(temp_board, col)
-        if row == -1:
-            continue
-        
-        # Make the move
-        game.make_move(temp_board, row, col, ai)
-
-        # Then check the eval of the board after we make the move
-        eval = evaluate(temp_board)
-
-        if eval >= best_score:
-            best_score = eval
-            best_move = col
-
-    return best_move
 
 
 def evaluate(board):
@@ -126,4 +111,44 @@ def evaluate(board):
     return evaluation
 
 
+def minmax(board, depth, maximising_player):
+    if depth == 0:
+        return evaluate(board)
+    
+    # For AI move
+    if maximising_player:
+        best_score = -float('inf') # Represents infinity
+        for col in range(columns):
+            temp_board = copy.deepcopy(board)
 
+            if (row := game.check_move(temp_board, col)) > -1:
+                game.make_move(temp_board, row , col, ai)
+
+                if game.check_winner(temp_board, row, col, ai):
+                    return 99999
+                if game.check_tie(temp_board):
+                    return 0
+
+                score = minmax(temp_board, depth-1, False)
+
+                best_score = max(best_score, score)
+        return best_score
+
+    # For Human move
+    else:
+        best_score = float('inf')
+        for col in range(columns):
+            temp_board = copy.deepcopy(board)
+
+            if (row := game.check_move(temp_board, col)) > -1:
+                game.make_move(temp_board, row , col, human)
+
+                if game.check_winner(temp_board, row, col, human):
+                    return -99999
+                if game.check_tie(temp_board):
+                    return 0
+
+                score = minmax(temp_board, depth-1, True)
+
+                best_score = min(best_score, score)
+        return best_score
