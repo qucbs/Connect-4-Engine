@@ -2,7 +2,6 @@ import pygame
 import sys
 import game
 import engine
-import test
 
 pygame.init()
 
@@ -81,7 +80,7 @@ while running:
     if current_player == ai and not game_over:
         # Wait a few seconds before AI moves
 
-        col = test.move(game.board)
+        col = engine.move(game.board)
         if (row := game.check_move(game.board, col)) > -1:
             
             game.make_move(game.board, row, col, ai)
